@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 
 const faqs = [
   {
@@ -18,26 +19,36 @@ const faqs = [
 export default function App() {
   return (
     <div>
-      <Accordion data={faqs} />
+      <Accordion />
     </div>
   );
 }
 
-function Accordion({ data }) {
+function Accordion() {
+  const [currOpen, setCurrOpen] = useState(null);
   return (
     <div className="accordion">
-      {data.map((el, i) => (
-        <Item number={i} title={el.title} text={el.text} key={el.title} />
+      {faqs.map((el, i) => (
+        <Item
+          currOpen={currOpen}
+          onOpen={setCurrOpen}
+          number={i}
+          title={el.title}
+          text={el.text}
+          key={el.title}
+        />
       ))}
     </div>
   );
 }
 
-function Item({ number, title, text }) {
-  const [isopen, setIsOpen] = useState(true);
+function Item({ currOpen, onOpen, number, title, text }) {
+  let isopen = currOpen === number;
+
+  // const [isopen, setIsOpen] = useState(true);
 
   function closeBtn() {
-    setIsOpen(!isopen);
+    isopen ? onOpen(null) : onOpen(number);
   }
 
   return (
@@ -49,3 +60,11 @@ function Item({ number, title, text }) {
     </div>
   );
 }
+
+Item.propTypes = {
+  number: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  currOpen: PropTypes.number.isRequired,
+  onOpen: PropTypes.func.isRequired,
+};
